@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/button_rounded_corner"
             android:text="Send OTP"
-            android:id="@+id/send_otp"/>
+            android:id="@+id/send_otp_btn"/>
         <ProgressBar
             android:layout_width="32dp"
             android:layout_height="wrap_content"
