@@ -1,9 +1,20 @@
 package com.example.chatapp.utils;
 
+import android.util.Log;
+
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class FirebaseUtil {
 
@@ -39,5 +50,27 @@ public class FirebaseUtil {
         }
         else
             return userId2+"_"+userId1;
+    }
+
+    public static CollectionReference allChatroomCollectionReference(){
+        return FirebaseFirestore.getInstance().collection("chatrooms");
+    }
+
+    public static DocumentReference getOtherUserFromChatroom(List<String> userIds){
+        if(userIds.get(0).equals(FirebaseUtil.currentUserId())){
+            return allUserCollectionReference().document(userIds.get(1));
+        }else{
+            return allUserCollectionReference().document(userIds.get(0));
+        }
+    }
+
+    public static String timestampToString(Timestamp timestamp) {
+        if (timestamp == null) {
+            return "";
+        } else {
+            LocalDateTime localDateTime = timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
+            return localDateTime.format(formatter);
+        }
     }
 }

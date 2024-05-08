@@ -100,6 +100,7 @@ public class ChatActivity extends AppCompatActivity {
     void sendMessageToUser(String message) {
         chatroomModel.setLastMessageTimestamp(Timestamp.now());
         chatroomModel.setLastMessageSenderId(FirebaseUtil.currentUserId());
+        chatroomModel.setLastMessage(message);
         FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
         ChatMessageModel chatMessageModel = new ChatMessageModel(
                 message,
@@ -118,22 +119,20 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
-    void getOrCreateChatroomModel() {
-        FirebaseUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                    chatroomModel = task.getResult().toObject(ChatroomModel.class);
-                    if(chatroomModel == null) {
-//                        first time chat
-                        chatroomModel = new ChatroomModel(
-                                chatroomId,
-                                Arrays.asList(FirebaseUtil.currentUserId(),otherUser.getUserId()),
-                                Timestamp.now(),
-                                ""
-                        );
-                        FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
-                    }
+    void getOrCreateChatroomModel(){
+        FirebaseUtil.getChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                chatroomModel = task.getResult().toObject(ChatroomModel.class);
+                if(chatroomModel==null){
+                    //first time chat
+                    chatroomModel = new ChatroomModel(
+                            chatroomId,
+                            Arrays.asList(FirebaseUtil.currentUserId(),otherUser.getUserId()),
+                            Timestamp.now(),
+                            ""
+                    );
+                    FirebaseUtil.getChatroomReference(chatroomId).set(chatroomModel);
+                }
             }
         });
     }
